@@ -39,14 +39,14 @@ const getCommunityCenterOcupation = async (id) => {
     if (!center) {
         return undefined;
     }
-    return { ocupation: `${(center.currentlyOcupation * 100) / center.maxOcupation}%` };
+    return (center.currentlyOcupation * 100) / center.maxOcupation;
 }
 
-const validateTrade = (firstCenter, secondCenter, firstCenterResources, secondCenterResources) => {
+const validateTrade = async (firstCenter, secondCenter, firstCenterResources, secondCenterResources) => {
     const firstCenterResourcesValue = getResourcesValue(firstCenterResources);
     const secondCenterResourcesValue = getResourcesValue(secondCenterResources);
-    const firstCenterOcupation = getCommunityCenterOcupation(firstCenter.maxOcupation, firstCenter.currentlyOcupation);
-    const secondCenterOcupation = getCommunityCenterOcupation(secondCenter.maxOcupation, secondCenter.currentlyOcupation);
+    const firstCenterOcupation = await getCommunityCenterOcupation(firstCenter._id);
+    const secondCenterOcupation = await getCommunityCenterOcupation(secondCenter._id);
 
     if (firstCenterResourcesValue === secondCenterResourcesValue) {
         return true;
@@ -96,11 +96,11 @@ const getAverageCommunityCentersResource = async () => {
 
     const quantCenters = await CommunityCenter.countDocuments({});
 
-    averageCommunityCentersResource.doctor =  Math.round(sumAllResources[0].doctor / quantCenters);
-    averageCommunityCentersResource.medKit =  Math.round(sumAllResources[0].medKit / quantCenters);
-    averageCommunityCentersResource.voluntary =  Math.round(sumAllResources[0].voluntary / quantCenters);
-    averageCommunityCentersResource.foodParcel =  Math.round(sumAllResources[0].foodParcel / quantCenters);
-    averageCommunityCentersResource.vehicle =  Math.round(sumAllResources[0].vehicle / quantCenters);
+    averageCommunityCentersResource.doctor = Math.round(sumAllResources[0].doctor / quantCenters);
+    averageCommunityCentersResource.medKit = Math.round(sumAllResources[0].medKit / quantCenters);
+    averageCommunityCentersResource.voluntary = Math.round(sumAllResources[0].voluntary / quantCenters);
+    averageCommunityCentersResource.foodParcel = Math.round(sumAllResources[0].foodParcel / quantCenters);
+    averageCommunityCentersResource.vehicle = Math.round(sumAllResources[0].vehicle / quantCenters);
 
     return averageCommunityCentersResource;
 }
@@ -122,8 +122,7 @@ const setPartialUpdatedCommunityCenterModelValues = (centerDB, center) => {
 };
 
 const getTradesLogByDates = async (id, initialDate, finalDate) => {
-    console.log(initialDate);
-    
+
     let trades = {};
     if (!initialDate || !finalDate) {
         trades = await CommunityCenterTrade.find({

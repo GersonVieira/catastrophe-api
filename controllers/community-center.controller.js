@@ -76,8 +76,8 @@ const tradeCommunityCenterResources = async (req, res) => {
         if (!firstCenter || !secondCenter) {
             res.status(404).json({ message: 'Community Center not found.' });
         } else {
-            const isValidTrade = CommunityCenterService.validateTrade(firstCenter, secondCenter, firstCenterTradeResources, secondCenterTradeResources);
-            if (!isValidTrade) {
+            const isValidTrade = await CommunityCenterService.validateTrade(firstCenter, secondCenter, firstCenterTradeResources, secondCenterTradeResources);            
+            if (!isValidTrade) {                
                 res.status(400).json({ message: 'Invalid resources trade' });
                 return;
             }
@@ -110,7 +110,7 @@ const getCommunityCenterOcupation = async (req, res) => {
     try {
         const { id } = req.params;
         const ocupation = await CommunityCenterService.getCommunityCenterOcupation(id);
-        res.status(200).json(ocupation);
+        res.status(200).json({ ocupation: `${ocupation}%` });
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
